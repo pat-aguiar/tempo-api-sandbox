@@ -24,16 +24,21 @@ export default function App() {
     return () => subscription.unsubscribe()
   }, [])
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = async (e: React.SyntheticEvent) => {
     e.preventDefault()
     setLoading(true)
     setMessage('')
-    
-    const { error } = await supabase.auth.signInWithOtp({ email })
-    
+
+    const { error } = await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        emailRedirectTo: window.location.origin,
+      }
+    })
+
     if (error) setMessage(error.message)
     else setMessage('Check your email for the login link!')
-    
+
     setLoading(false)
   }
 
@@ -43,7 +48,7 @@ export default function App() {
       <div className="min-h-screen bg-slate-50 p-8">
         <div className="max-w-4xl mx-auto flex justify-between items-center mb-8">
           <h1 className="text-2xl font-bold text-slate-800">Component API Sandbox</h1>
-          <button 
+          <button
             onClick={() => supabase.auth.signOut()}
             className="text-sm font-medium text-slate-500 hover:text-slate-800"
           >
