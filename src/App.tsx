@@ -57,7 +57,7 @@ export default function App() {
           </button>
         </div>
         <div className="max-w-4xl mx-auto">
-          <Sandbox userEmail={session.user.email} />
+          <Sandbox userEmail={session.user.email} userId={session.user.id} />
         </div>
       </div>
     )
