@@ -2,12 +2,18 @@ import { useState, useEffect } from 'react'
 import { supabase } from './lib/supabase'
 import type { Session } from '@supabase/supabase-js'
 import Sandbox from './components/Sandbox'
+import ComponentList from './components/ComponentList'
 
 export default function App() {
   const [session, setSession] = useState<Session | null>(null)
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const handleUploadSuccess = () => {
+    setRefreshKey(prev => prev + 1);
+  };
 
   useEffect(() => {
     // Check active session on load
@@ -57,7 +63,15 @@ export default function App() {
           </button>
         </div>
         <div className="max-w-4xl mx-auto">
-          <Sandbox userEmail={session.user.email} userId={session.user.id} />
+          <Sandbox
+            userEmail={session.user.email}
+            userId={session.user.id}
+            onSuccess={handleUploadSuccess}
+          />
+          <ComponentList
+            key={refreshKey}
+            userId={session.user.id}
+          />
         </div>
       </div>
     )
