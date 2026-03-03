@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from './lib/supabase'
 import type { Session } from '@supabase/supabase-js'
+import Sandbox from './components/Sandbox'
 
 export default function App() {
   const [session, setSession] = useState<Session | null>(null)
@@ -55,8 +56,8 @@ export default function App() {
             Sign Out
           </button>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
-          <p className="text-slate-600">Welcome, {session.user.email}. The sandbox goes here.</p>
+        <div className="max-w-4xl mx-auto">
+          <Sandbox userEmail={session.user.email} />
         </div>
       </div>
     )
