@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { supabase } from '../lib/supabase' 
+import { supabase } from '../lib/supabase'
 
 interface SavedComponent {
   id: string
@@ -14,15 +14,25 @@ export default function ComponentList({ userId }: { userId: string }) {
 
   useEffect(() => {
     async function fetchComponents() {
-      const { data, error } = await supabase
-        .from('components')
-        .select('*')
-        .order('created_at', { ascending: false })
+      setLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from('components')
+          .select('*')
+          .order('created_at', { ascending: false })
 
-      if (!error && data) {
-        setComponents(data)
+        if (error) {
+          throw error
+        }
+
+        if (data) {
+          setComponents(data)
+        }
+      } catch (error) {
+        console.error('Error fetching components:', error)
+      } finally {
+        setLoading(false)
       }
-      setLoading(false)
     }
 
     fetchComponents()
