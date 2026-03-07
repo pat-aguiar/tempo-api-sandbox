@@ -6,11 +6,42 @@ interface SavedComponent {
   created_at: string
   component_code: string
   image_url: string
+  openapi_spec?: string | null
+  user_id: string
 }
 
 export default function ComponentList({ userId }: { userId: string }) {
   const [components, setComponents] = useState<SavedComponent[]>([])
   const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    // 1. Listen for changes specifically on the 'components' table for the current user
+    const channel = supabase.channel(`components-user-${userId}`)
+    
+    channel
+      .on(
+        'postgres_changes', 
+        { 
+          event: 'UPDATE', 
+          schema: 'public', 
+          table: 'components',
+          filter: `user_id=eq.${userId}`,
+        }, 
+        (payload) => {
+          // 2. If the updated row has a new spec, update the local UI state
+          if (payload.new.openapi_spec) {
+            console.log("AI Spec received in real-time!", payload.new.openapi_spec);
+            // Update your components state here
+            setComponents(current => 
+              current.map(c => c.id === payload.new.id ? (payload.new as SavedComponent) : c)
+            );
+          }
+        }
+      )
+      .subscribe();
+  
+    return () => { supabase.removeChannel(channel) };
+  }, [userId]);
 
   useEffect(() => {
     async function fetchComponents() {
@@ -19,6 +50,7 @@ export default function ComponentList({ userId }: { userId: string }) {
         const { data, error } = await supabase
           .from('components')
           .select('*')
+          .eq('user_id', userId)
           .order('created_at', { ascending: false })
 
         if (error) {
@@ -29,7 +61,11 @@ export default function ComponentList({ userId }: { userId: string }) {
           setComponents(data)
         }
       } catch (error) {
-        console.error('Error fetching components:', error)
+        if (error instanceof Error) {
+            console.error('Error fetching components:', error.message)
+        } else {
+            console.error('An unknown error occurred:', error)
+        }
       } finally {
         setLoading(false)
       }
