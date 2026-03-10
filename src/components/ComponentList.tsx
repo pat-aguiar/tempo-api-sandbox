@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
-import type { SavedComponent } from '../types'
+import type { SavedComponent } from '../lib/types'
 import { ApiInspector } from './ApiInspector'
+import { ComponentPreview } from './ComponentPreview'
 
 export default function ComponentList({ userId }: { userId: string }) {
   const [components, setComponents] = useState<SavedComponent[]>([])
@@ -77,7 +78,16 @@ export default function ComponentList({ userId }: { userId: string }) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {components.map((c) => (
           <div key={c.id} onClick={() => { setSelectedComponent(c); setIsInspectorOpen(true); }} className="group cursor-pointer bg-white border border-slate-800 rounded-xl overflow-hidden hover:border-blue-500/50 transition-all">
-            <img src={c.image_url} alt="Reference" className="w-full h-48 object-cover border-b border-slate-100" />
+            {/* <img src={c.image_url} alt="Reference" className="w-full h-48 object-cover border-b border-slate-100" /> */}
+            <div className="aspect-video relative bg-white overflow-hidden">
+              {c.component_code ? (
+                <div className="w-full h-full cursor-default" onClick={(e) => e.stopPropagation()}>
+                  <ComponentPreview code={c.component_code} />
+                </div>
+              ) : (
+                <img src={c.image_url} alt="Reference" className="object-cover w-full h-full" />
+              )}
+            </div>
             <div className="p-4">
               <pre className="bg-slate-50 p-2 rounded text-xs text-slate-600 overflow-x-auto max-h-24">
                 <code>{c.component_code}</code>

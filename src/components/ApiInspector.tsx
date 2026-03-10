@@ -1,6 +1,6 @@
 import React from 'react';
 import { X, Code, Globe, Database } from 'lucide-react';
-import type { SavedComponent } from '../types';
+import type { SavedComponent } from '../lib/types';
 
 interface ApiInspectorProps {
   isOpen: boolean;
