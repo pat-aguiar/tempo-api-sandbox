@@ -1,73 +1,28 @@
-# React + TypeScript + Vite
+# AI Component Sandbox & Live Render Engine
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Overview
+This project is an advanced developer tool that allows users to store, inspect, and execute raw React components dynamically. It features an AI-driven pipeline that automatically reverse-engineers OpenAPI specifications from uploaded code, paired with a custom in-browser execution engine.
 
-Currently, two official plugins are available:
+## Key Features
+* **Live Component Execution:** Dynamically transpiles and renders raw React string payloads in the browser using `@babel/standalone` and a scoped `new Function` constructor.
+* **AI-Generated OpenAPI Schemas:** Integrates with Supabase Edge Functions and AI to automatically extract property contracts, default values, and prop types from prop-less components.
+* **Interactive Code Playground:** Features a built-in code editor with 500ms debouncing and React Error Boundaries to prevent runtime crashes during live editing.
+* **Event Bubbling Isolation:** Custom event handling to separate live component interactions from the application's UI state.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Technical Stack
+* **Frontend:** React, TypeScript, Tailwind CSS, Lucide Icons
+* **Execution Engine:** `@babel/standalone`
+* **Backend:** Supabase (PostgreSQL), Supabase Edge Functions (Deno)
 
-## React Compiler
+## Architecture Decisions
+Key architectural choices are documented in the `docs/adr` directory:
+* **[ADR 007: Live Component Rendering Engine](docs/adr/007-live-component-rendering.md):** Details the decision to use a Scoped Function Execution model over traditional iframes to provide a seamless WYSIWYG experience.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Future Iterations
+Known limitations and planned features are tracked in [`docs/TODO.md`](docs/TODO.md), including mapping the AI-generated schemas to dynamic UI controls and mitigating Tailwind CSS JIT compiler limitations for runtime classes.
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Setup Instructions
+1. Clone the repository.
+2. Run `npm install` to install frontend dependencies.
+3. Configure your Supabase environment variables in a `.env` file.
+4. Run `npm run dev` to start the local development server.
