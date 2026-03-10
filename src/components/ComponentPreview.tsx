@@ -6,6 +6,25 @@ interface Props {
   code: string;
 }
 
+class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean, error: any }> {
+  state = { hasError: false, error: null };
+
+  static getDerivedStateFromError(error: any) {
+    return { hasError: true, error };
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="p-4 bg-red-900/20 border border-red-500/50 rounded text-red-400 text-xs overflow-auto">
+          Runtime Error: {String(this.state.error)}
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 export const ComponentPreview: React.FC<Props> = ({ code }) => {
   const RenderedComponent = useMemo(() => {
     try {
@@ -34,10 +53,10 @@ export const ComponentPreview: React.FC<Props> = ({ code }) => {
       // 4. Inject the scope dynamically into the Function constructor
       const scopeKeys = Object.keys(scope);
       const scopeValues = Object.values(scope);
-      
+
       const finalCode = `${transpiledCode}; return GeneratedComponent;`;
       const createComponent = new Function(...scopeKeys, finalCode);
-      
+
       return createComponent(...scopeValues);
     } catch (err) {
       console.error("Rendering Error:", err);
@@ -50,8 +69,11 @@ export const ComponentPreview: React.FC<Props> = ({ code }) => {
   }, [code]);
 
   return (
-    <div className="w-full h-full flex items-center justify-center p-4 bg-slate-300/50 border-b border-zinc-800">
-      <RenderedComponent />
+    <div className="w-full h-full flex items-center justify-center p-4 bg-zinc-900/50 rounded-lg border border-zinc-800">
+      {/* React trick: 'key' prop forces the ErrorBoundary to completely reset itself every time the user types a new character! */}
+      <ErrorBoundary key={code}>
+        <RenderedComponent />
+      </ErrorBoundary>
     </div>
   );
 };

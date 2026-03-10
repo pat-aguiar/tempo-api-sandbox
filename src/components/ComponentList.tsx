@@ -77,8 +77,7 @@ export default function ComponentList({ userId }: { userId: string }) {
       <h2 className="text-xl font-bold text-slate-800 mb-4">Your Recent Submissions</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {components.map((c) => (
-          <div key={c.id} onClick={() => { setSelectedComponent(c); setIsInspectorOpen(true); }} className="group cursor-pointer bg-white border border-slate-800 rounded-xl overflow-hidden hover:border-blue-500/50 transition-all">
-            {/* <img src={c.image_url} alt="Reference" className="w-full h-48 object-cover border-b border-slate-100" /> */}
+          <div key={c.id} onClick={() => { setSelectedComponent(c); setIsInspectorOpen(!isInspectorOpen); }} className="group cursor-pointer bg-white border border-slate-800 rounded-xl overflow-hidden hover:border-blue-500/50 transition-all">
             <div className="aspect-video relative bg-white overflow-hidden">
               {c.component_code ? (
                 <div className="w-full h-full cursor-default" onClick={(e) => e.stopPropagation()}>
